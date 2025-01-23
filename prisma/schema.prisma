@@ -1,0 +1,154 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
+}
+
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(cuid())
+  name       String
+  username   String    @unique
+  email      String    @unique
+  password   String
+  googleId   String?   @unique
+  coverPhoto String?
+  image      String?
+  bio        String?
+  session    Session[]
+  tweets     Tweet[]
+
+  createdAt   DateTime @default(now())
+  likedTweets Like[]
+
+  following             Follow[]        @relation("following")
+  followers             Follow[]        @relation("followers")
+  bookmarks             Bookmark[]
+  comments              Comment[]
+  issuerNotifications   Notification[] @relation("Recipient")
+  receivedNotifications Notification[] @relation("Issuer")
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+
+  @@map("sessions")
+}
+
+model Tweet {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+
+  attachments         Attachment[]
+  likes               Like[]
+  bookmarks           Bookmark[]
+  comments            Comment[]
+  linkedNotifications Notification[]
+
+  @@map("tweets")
+}
+
+model Follow {
+  follower   User   @relation("following", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId String
+
+  following   User   @relation("followers", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId String
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model Attachment {
+  id        String    @id @default(cuid())
+  tweetId   String?
+  tweet     Tweet?    @relation(fields: [tweetId], references: [id], onDelete: SetNull)
+  type      MediaType
+  url       String
+  createdAt DateTime  @default(now())
+
+  @@map("attachments")
+}
+
+model Like {
+  tweet   Tweet  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+  tweetId String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String
+
+  @@unique([tweetId, userId])
+  @@map("likes")
+}
+
+model Comment {
+  id String @id @default(cuid())
+
+  content   String
+  createdAt DateTime @default(now())
+  isEdited  Boolean  @default(false)
+
+  tweet   Tweet  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+  tweetId String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String
+
+  @@map("comments")
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  tweet     Tweet    @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+  tweetId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@unique([tweetId, userId])
+  @@map("bookmarks")
+}
+
+model Notification {
+  id          String @id @default(cuid())
+  tweet       Tweet?  @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+  tweetId     String?
+  issuer      User   @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  issuerId    String
+  recipient   User   @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  recipientId String
+
+  read Boolean          @default(false)
+  type NotificationType
+
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum NotificationType {
+  LIKE
+  FOLLOW
+  COMMENT
+}
