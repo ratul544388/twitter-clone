@@ -22,7 +22,7 @@ export const BottomNavigationMenu = () => {
               <Link
                 href={href}
                 className={cn(
-                  "rounded-full block p-3 hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground",
+                  "rounded-full block py-3 px-5 hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground",
                   isActive && "bg-secondary text-foreground",
                 )}
               >

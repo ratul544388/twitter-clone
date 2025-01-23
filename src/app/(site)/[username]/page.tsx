@@ -2,6 +2,7 @@ import Avatar from "@/components/avatar";
 import { CoverPhoto } from "@/components/cover-photo";
 import { PageHeader } from "@/components/page-header";
 import { FollowButton } from "@/components/right-sidebar/follow-button";
+import { UserProfilePageSkeleton } from "@/components/skeletons/user-profile-page-skeleton";
 import { TweetFeed } from "@/components/tweet-feed";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/get-current-user";
@@ -10,7 +11,7 @@ import { getUserDataSelect, ParamsType } from "@/types";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { cache } from "react";
+import { cache, Suspense } from "react";
 import { EditProfileButton } from "./_components/edit-profile-button";
 
 const getUserByUsername = cache(async (username: string) => {
@@ -42,8 +43,17 @@ export const generateMetadata = async ({
 const Page = async ({ params }: { params: ParamsType }) => {
   const { username } = await params;
 
-  const currentUser = await getCurrentUser();
+  return (
+    <Suspense fallback={<UserProfilePageSkeleton />}>
+      <Children username={username} />
+    </Suspense>
+  );
+};
 
+export default Page;
+
+const Children = async ({ username }: { username: string }) => {
+  const currentUser = await getCurrentUser();
   const user = await getUserByUsername(username);
 
   if (!user) {
@@ -57,7 +67,7 @@ const Page = async ({ params }: { params: ParamsType }) => {
         showBackButton
         postCount={user._count.tweets}
       />
-      <CoverPhoto src={user.coverPhoto}/>
+      <CoverPhoto src={user.coverPhoto} />
       <Avatar
         src={user.image}
         alt={user.name}
@@ -83,7 +93,7 @@ const Page = async ({ params }: { params: ParamsType }) => {
         <p className="leading-3 text-secondary-foreground">@{user.username}</p>
         <div className="mt-3 flex gap-3">
           <Link
-            href="/followers"
+            href={`/${user.username}/followers`}
             className="text-muted-foreground hover:underline"
           >
             Followers:{" "}
@@ -92,7 +102,7 @@ const Page = async ({ params }: { params: ParamsType }) => {
             </span>
           </Link>
           <Link
-            href="/following"
+            href={`/${user.username}/following`}
             className="text-muted-foreground hover:underline"
           >
             Following:{" "}
@@ -115,5 +125,3 @@ const Page = async ({ params }: { params: ParamsType }) => {
     </>
   );
 };
-
-export default Page;

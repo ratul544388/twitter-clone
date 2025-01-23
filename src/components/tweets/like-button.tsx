@@ -2,6 +2,7 @@
 
 import { like } from "@/actions/likes";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { useModalStore } from "@/hooks/use-modal-store";
 import { cn } from "@/lib/utils";
 import { TweetData, TweetsPage } from "@/types";
 import {
@@ -20,6 +21,7 @@ interface LikeButtonProps {
 export const LikeButton = ({ tweet }: LikeButtonProps) => {
   const currentUser = useCurrentUser();
   const queryClient = useQueryClient();
+  const { onOpen } = useModalStore();
   const isLiked = tweet.likes.some((like) => like.userId === currentUser?.id);
   const queryFilter = {
     queryKey: ["tweet-feed"],
@@ -27,6 +29,9 @@ export const LikeButton = ({ tweet }: LikeButtonProps) => {
 
   const { mutate } = useMutation({
     mutationFn: async () => {
+      if (!currentUser) {
+        return onOpen("login");
+      }
       await like({ isLiked, tweetId: tweet.id });
     },
     onMutate: async () => {

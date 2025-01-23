@@ -10,7 +10,7 @@ export const BottomSignupBar = () => {
 
   if (currentUser) return null;
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 bg-primary">
+    <div className="fixed hidden sm:block inset-x-0 bottom-0 z-40 bg-primary">
       <div className="mx-auto flex h-20 max-w-screen-lg items-center justify-center sm:justify-between px-5">
         <div className="hidden sm:block">
           <strong className="text-xl">Join Twitter Now</strong>

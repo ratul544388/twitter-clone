@@ -6,6 +6,8 @@ import { MousePointer2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { CommentData, TweetData } from "@/types";
 import { useUpdateCommentMutation } from "@/hooks/use-update-comment-mutation";
+import { useModalStore } from "@/hooks/use-modal-store";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 export const CommentInput = ({
   tweet,
@@ -18,6 +20,8 @@ export const CommentInput = ({
   autoFocus?: boolean;
   onEditingChange?: () => void;
 }) => {
+  const {onOpen} = useModalStore();
+  const currentUser = useCurrentUser();
   const [showSubmitButton, setShowSubmitButton] = React.useState(false);
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
   const [value, setValue] = React.useState(comment?.content || "");
@@ -35,6 +39,9 @@ export const CommentInput = ({
 
   const handleSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!currentUser) {
+      return onOpen("login");
+    }
     if (comment) {
       return updateComment(
         { values: { content: value }, commentId: comment.id },

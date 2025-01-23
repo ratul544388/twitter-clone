@@ -16,7 +16,9 @@ const Home = async () => {
     <>
       <PageHeader label="Home" />
       {currentUser && <TweetInput />}
-      <TweetFeed tabs={["for-you-tweets", "following-users-tweets"]}/>
+      <TweetFeed
+        tabs={currentUser ? ["for-you-tweets", "following-users-tweets"] : []}
+      />
     </>
   );
 };

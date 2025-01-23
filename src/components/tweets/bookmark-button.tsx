@@ -2,6 +2,7 @@
 
 import { bookmark } from "@/actions/bookmarks";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { useModalStore } from "@/hooks/use-modal-store";
 import { cn } from "@/lib/utils";
 import { TweetData, TweetsPage } from "@/types";
 import {
@@ -19,6 +20,7 @@ interface BookmarkButtonProps {
 
 export const BookmarkButton = ({ tweet }: BookmarkButtonProps) => {
   const currentUser = useCurrentUser();
+  const {onOpen} = useModalStore();
   const queryClient = useQueryClient();
   const isBookmarked = tweet.bookmarks.some(
     (b) => b.userId === currentUser?.id,
@@ -29,6 +31,9 @@ export const BookmarkButton = ({ tweet }: BookmarkButtonProps) => {
 
   const { mutate } = useMutation({
     mutationFn: async () => {
+      if (!currentUser) {
+        return onOpen("login");
+      }
       await bookmark({ isBookmarked, tweetId: tweet.id });
     },
     onMutate: async () => {

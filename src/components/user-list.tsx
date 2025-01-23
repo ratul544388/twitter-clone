@@ -11,6 +11,7 @@ import { Loader } from "./loader";
 import { UsersSkeleton } from "./skeletons/users-skeleton";
 import { Button } from "./ui/button";
 import { User } from "./user";
+import { queries } from "@/constants";
 
 interface UserListProps {
   type: QueryKey;
@@ -18,6 +19,7 @@ interface UserListProps {
   onClickSeeMoreButton?: () => void;
   fetchOnce?: boolean;
   q?: string;
+  username?: string;
 }
 
 export const UserList = ({
@@ -26,12 +28,13 @@ export const UserList = ({
   onClickSeeMoreButton,
   fetchOnce,
   q,
+  username,
 }: UserListProps) => {
   const { data, status, fetchNextPage, isFetchingNextPage, hasNextPage } =
     useInfiniteQuery({
-      queryKey: ["users", type, q],
+      queryKey: ["users", type, q, username],
       queryFn: async ({ pageParam }) =>
-        await getUserList({ cursor: pageParam, type, take, q }),
+        await getUserList({ cursor: pageParam, type, take, q, username }),
       initialPageParam: null as string | null,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     });
@@ -42,7 +45,8 @@ export const UserList = ({
     return (
       <EmptyState
         icon={UserRoundX}
-        title="No Users found"
+        title={queries.find((q) => q.key === type)?.emptyTitle}
+        description={queries.find((q) => q.key === type)?.emptyDescription}
       />
     );
   }

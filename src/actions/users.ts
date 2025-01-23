@@ -150,16 +150,19 @@ export const updateProfile = async (values: UpdateProfileValues) => {
 
   return user;
 };
+
 export const getUserList = async ({
   cursor,
   take = 20,
   type,
   q,
+  username,
 }: {
   cursor?: string | null;
   take?: number;
   type?: QueryKey;
   q?: string;
+  username?: string;
 }) => {
   const currentUser = await getCurrentUser();
 
@@ -177,8 +180,9 @@ export const getUserList = async ({
             },
           }
         : {}),
-      ...(type === "followers"
+      ...(type === "followers" && username
         ? {
+            username,
             following: {
               some: {
                 followerId: currentUser?.id,
@@ -186,8 +190,9 @@ export const getUserList = async ({
             },
           }
         : {}),
-      ...(type === "following"
+      ...(type === "following" && username
         ? {
+            username,
             followers: {
               some: {
                 followerId: currentUser?.id,
@@ -232,4 +237,8 @@ export const getUserList = async ({
   };
 
   return data;
+};
+
+export const loginWithGoogle = async () => {
+  await signIn("google");
 };

@@ -137,14 +137,4 @@ export type FollowerInfo = {
   isFollowing: boolean;
 };
 
-export type TabType =
-  | "all"
-  | "for you"
-  | "following"
-  | "user-tweets"
-  | "user-media"
-  | "user-liked"
-  | "searched-tweets"
-  | "searched-users";
-
 export type QueryKey = (typeof queries)[number]["key"];

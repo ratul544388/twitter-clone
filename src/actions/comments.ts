@@ -56,11 +56,6 @@ export const getComments = async ({
   cursor: string | null;
   tweetId: string;
 }) => {
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser) {
-    throw new Error("Unauthenticated");
-  }
 
   const comments = await db.comment.findMany({
     where: {

@@ -29,6 +29,7 @@ export const SidebarItems = ({ className, onClose }: SidebarItemsProps) => {
     queryKey: ["unread-notifications"],
     queryFn: async () => getUnreadNotificationCount(),
     refetchInterval: 60 * 1000,
+    enabled: !!currentUser,
   });
 
   return (

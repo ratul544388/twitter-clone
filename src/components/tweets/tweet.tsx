@@ -183,7 +183,7 @@ export const MoreButton = ({
         <Button
           variant="ghost"
           size="icon"
-          className="ml-auto -translate-y-1 rounded-full hover:bg-background"
+          className="ml-auto -translate-y-1 rounded-full hover:bg-background focus-visible:ring-0 focus-visible:ring-offset-0"
         >
           <MoreVertical className="size-4" />
         </Button>

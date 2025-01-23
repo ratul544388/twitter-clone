@@ -13,7 +13,7 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useModalStore } from "@/hooks/use-modal-store";
@@ -23,6 +23,8 @@ import { registerSchema, registerValues } from "@/lib/validations";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { GoogleLoginButton } from "../google-login-button";
+import { OrSeparator } from "../or-separator";
 
 export const RegisterForm = ({ className }: { className?: string }) => {
   const [isPending, startTransition] = useTransition();
@@ -56,7 +58,7 @@ export const RegisterForm = ({ className }: { className?: string }) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={cn("flex w-full max-w-[480px] flex-col gap-6", className)}
+        className={cn("flex w-full max-w-[480px] flex-col", className)}
       >
         <div className="text-center">
           <h2 className="text-xl font-semibold">Join Twitter Today!</h2>
@@ -64,7 +66,7 @@ export const RegisterForm = ({ className }: { className?: string }) => {
             Sign up to connect and share your voice.
           </p>
         </div>
-        <div className="flex flex-col gap-8 mt-5">
+        <div className="mt-8 flex flex-col gap-8">
           <FormField
             control={form.control}
             name="name"
@@ -114,28 +116,32 @@ export const RegisterForm = ({ className }: { className?: string }) => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <PasswordInput
-                    disabled={isPending}
-                    label="Enter Confirm Password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="space-y-3">
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <PasswordInput
+                      disabled={isPending}
+                      label="Enter Confirm Password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormError error={error} />
+          </div>
+          <LoadingButton isLoading={isPending} className="mt-2 w-full">
+            Register
+          </LoadingButton>
         </div>
-        <FormError error={error} />
-        <LoadingButton isLoading={isPending} className="mt-2 w-full">
-          Submit
-        </LoadingButton>
-        <div className="mt-4 text-center text-sm">
+        <OrSeparator className="my-10"/>
+        <GoogleLoginButton/>
+        <div className="text-center text-sm mt-10">
           Already have an account?{" "}
           {isOpen && type === "register" ? (
             <button
@@ -147,7 +153,13 @@ export const RegisterForm = ({ className }: { className?: string }) => {
               Login
             </button>
           ) : (
-            <Link href="/auth/login" className={cn("text-blue-500 underline", isPending && "pointer-events-none opacity-60")}>
+            <Link
+              href="/auth/login"
+              className={cn(
+                "text-blue-500 underline",
+                isPending && "pointer-events-none opacity-60",
+              )}
+            >
               Login
             </Link>
           )}

@@ -2,7 +2,7 @@ import { PageHeaderSkeleton } from "@/components/skeletons/page-header-skeleton"
 import { TweetsSkeleton } from "@/components/skeletons/tweets-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const Loading = () => {
+export const UserProfilePageSkeleton = () => {
   return (
     <div className="relative">
       <PageHeaderSkeleton doubleLabel/>
@@ -31,5 +31,3 @@ const Loading = () => {
     </div>
   );
 };
-
-export default Loading;

@@ -6,7 +6,7 @@ import {
   apiAuthPrefix,
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
-  publicRoutes,
+  privateRoutes
 } from "@/lib/routes";
 
 const { auth } = NextAuth(authConfig);
@@ -16,7 +16,7 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  const isPublicRoutes = publicRoutes.includes(nextUrl.pathname);
+  const isPrivateRoutes = privateRoutes.includes(nextUrl.pathname);
   const isAuthRoutes = authRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) return;
@@ -28,7 +28,7 @@ export default auth((req) => {
     return;
   }
 
-  if (!isLoggedIn && !isPublicRoutes) {
+  if (!isLoggedIn && isPrivateRoutes) {
     return Response.redirect(new URL("/auth/login", nextUrl));
   }
 
