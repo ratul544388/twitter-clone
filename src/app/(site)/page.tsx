@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/page-header";
-import { TweetInput } from "@/components/tweets/tweet-input";
 import { TweetFeed } from "@/components/tweet-feed";
+import { TweetInput } from "@/components/tweets/tweet-input";
 import { getCurrentUser } from "@/lib/get-current-user";
 import { Metadata } from "next";
 
@@ -12,6 +12,7 @@ export const generateMetadata = (): Metadata => {
 
 const Home = async () => {
   const currentUser = await getCurrentUser();
+
   return (
     <>
       <PageHeader label="Home" />

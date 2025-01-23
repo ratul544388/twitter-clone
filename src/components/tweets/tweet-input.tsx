@@ -104,7 +104,10 @@ export const TweetInput = ({
             <>
               <EditorContent
                 editor={editor}
-                className="mt-2 max-h-40 w-full overflow-y-auto break-all border-b"
+                className={cn(
+                  "mt-2 max-h-40 w-full overflow-y-auto break-all border-b",
+                  isPending && "pointer-events-none opacity-60",
+                )}
               />
               <span
                 className={cn(

@@ -15,7 +15,7 @@ export const Loader = ({
   icon: Icon = Loader2,
 }: LoaderProps) => {
   return (
-    <div className={cn("text-primary", className)}>
+    <div className={cn("text-primary flex items-center justify-center", className)}>
       <Icon className="animate-spin" size={size} />
     </div>
   );

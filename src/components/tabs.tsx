@@ -22,7 +22,7 @@ export const Tabs = ({ value, onChange, className, queryKeys }: TabsProps) => {
           <li key={key} className="w-full">
             <Button
               onClick={() => onChange(key)}
-              className="h-12 w-full rounded-none hover:bg-blue-500/10"
+              className="h-12 w-full rounded-none hover:bg-secondary"
               variant="ghost"
             >
               <span className="relative capitalize">

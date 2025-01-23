@@ -3,8 +3,8 @@
 import { getNavLinks } from "@/constants";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useModalStore } from "@/hooks/use-modal-store";
+import { useUnreadNotificationCount } from "@/hooks/use-unread-notification-count";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaFeather } from "react-icons/fa";
@@ -13,7 +13,6 @@ import { ThemeToggler } from "../theme-toggler";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { UserButton } from "../user-button";
-import { getUnreadNotificationCount } from "@/actions/notifications";
 
 interface SidebarItemsProps {
   className?: string;
@@ -22,15 +21,9 @@ interface SidebarItemsProps {
 
 export const SidebarItems = ({ className, onClose }: SidebarItemsProps) => {
   const pathname = usePathname();
-
   const currentUser = useCurrentUser();
 
-  const { data: unreadNotificationCount } = useQuery({
-    queryKey: ["unread-notifications"],
-    queryFn: async () => getUnreadNotificationCount(),
-    refetchInterval: 60 * 1000,
-    enabled: !!currentUser,
-  });
+  const unreadNotificationCount = useUnreadNotificationCount();
 
   return (
     <div className={cn("flex h-full flex-col py-3", className)}>
@@ -45,7 +38,7 @@ export const SidebarItems = ({ className, onClose }: SidebarItemsProps) => {
                   onClick={onClose}
                   href={href}
                   className={cn(
-                    "relative flex items-center gap-3 px-4 py-3 text-secondary-foreground hover:bg-blue-500/10",
+                    "relative flex items-center gap-3 px-4 py-3 text-secondary-foreground hover:bg-secondary",
                     isActive && "font-medium text-foreground",
                   )}
                 >
