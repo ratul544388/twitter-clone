@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Comments } from "./comments";
 import { CommentsSkeleton } from "./skeletons/comments-skeleton";
 import { Tabs } from "./tabs";
+import { queries } from "@/constants";
 
 interface TweetFeedProps {
   take?: number;
@@ -69,7 +70,10 @@ export const TweetFeed = ({
         {status === "pending" && <TweetsSkeleton count={take} />}
         {status === "error" && <Error />}
         {status === "success" && !!!tweets.length && (
-          <EmptyState title="No Tweets Found" />
+          <EmptyState
+            title={queries.find((q) => q.key === activeTab)?.emptyTitle}
+            description={queries.find((q) => q.key === activeTab)?.emptyDescription}
+          />
         )}
         {!hasNextPage && !isFetchingNextPage && !!tweets.length && !tweetId && (
           <p className="mt-6 text-center text-sm text-muted-foreground">
