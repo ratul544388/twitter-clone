@@ -15,8 +15,6 @@ interface TabsProps {
 export const Tabs = ({ value, onChange, className, queryKeys }: TabsProps) => {
   const _queries = queries.filter((q) => queryKeys.includes(q.key));
 
-  console.log({_queries})
-
   return (
     <nav className={cn("border-b sticky backdrop-blur-lg top-[70px] z-30", className)}>
       <ul className="flex">

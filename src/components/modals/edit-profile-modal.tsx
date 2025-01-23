@@ -23,10 +23,12 @@ import {
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import ImageCropModal from "./image-crop-modal";
+import { CircularProgressBar } from "../circular-progress-bar";
 
 export default function EditProfileModal() {
   const { onClose, isOpen, data, type } = useModalStore();
   const { mutate, isPending } = useUpdateProfileMutation();
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   function handleOpenChange() {
     if ((!isOpen && type === "editProfile") || !isPending) {
@@ -81,13 +83,15 @@ export default function EditProfileModal() {
         <DialogHeader className="py-4 pl-4">
           <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
-        <div className="max-h-[80vh] overflow-y-auto thin-scrollbar">
+        <div className="thin-scrollbar max-h-[80vh] overflow-y-auto">
           <div className="relative">
             <CoverPhoto
+              onUploadComplete={setIsUploadingImage}
               src={coverPhoto}
               onChange={(value) => form.setValue("coverPhoto", value)}
             />
             <AvatarInput
+              onUploadComplete={setIsUploadingImage}
               image={image}
               onChange={(value) => form.setValue("image", value)}
             />
@@ -149,7 +153,10 @@ export default function EditProfileModal() {
                 />
               </div>
               <div className="sticky bottom-[1px] flex justify-end bg-background px-5 py-2">
-                <Button disabled={isPending} className="rounded-full">
+                <Button
+                  disabled={isPending || isUploadingImage}
+                  className="rounded-full"
+                >
                   Save
                 </Button>
               </div>
@@ -164,16 +171,25 @@ export default function EditProfileModal() {
 interface AvatarInputProps {
   image?: string;
   onChange: (image?: string) => void;
+  onUploadComplete: (isUploading: boolean) => void;
 }
 
-const AvatarInput = ({ image, onChange }: AvatarInputProps) => {
-  const { startUpload } = useUploadThing("singlePhoto");
+const AvatarInput = ({
+  image,
+  onChange,
+  onUploadComplete,
+}: AvatarInputProps) => {
+  const [uploadProgress, setUploadProgress] = useState<number>();
+  const { startUpload } = useUploadThing("singlePhoto", {
+    onUploadProgress: setUploadProgress,
+  });
   const [isPending, startTransition] = useTransition();
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [imageToCrop, setImageToCrop] = useState<File>();
   const [previewImage, setPreviewImage] = useState<string | undefined>(image);
 
   const handleUpload = (file: File) => {
+    onUploadComplete(true);
     setPreviewImage(URL.createObjectURL(file));
     startTransition(async () => {
       try {
@@ -182,6 +198,8 @@ const AvatarInput = ({ image, onChange }: AvatarInputProps) => {
 
         if (uploadedImage) {
           onChange(uploadedImage);
+          onUploadComplete(false);
+          setUploadProgress(undefined);
         }
       } catch (error) {
         console.log(error);
@@ -223,6 +241,13 @@ const AvatarInput = ({ image, onChange }: AvatarInputProps) => {
         src={previewImage}
         className="size-40 -translate-y-1/2 border-[5px]"
       />
+      {!!uploadProgress && (
+        <CircularProgressBar
+          value={uploadProgress}
+          strokeWidth={4}
+          className="z-50 -translate-y-full"
+        />
+      )}
       <div className="absolute left-1/2 top-0 flex -translate-x-1/2 -translate-y-1/2 gap-1">
         <Button
           onClick={() => imageInputRef.current?.click()}
@@ -264,9 +289,11 @@ const AvatarInput = ({ image, onChange }: AvatarInputProps) => {
 export const CoverPhoto = ({
   src,
   onChange,
+  onUploadComplete,
 }: {
   src?: string;
   onChange: (src?: string) => void;
+  onUploadComplete: (isUploading: boolean) => void;
 }) => {
   const { startUpload } = useUploadThing("singlePhoto");
   const [isPending, startTransition] = useTransition();
@@ -290,6 +317,7 @@ export const CoverPhoto = ({
   };
 
   const handleUpload = (file: File) => {
+    onUploadComplete(true);
     setPreviewImage(URL.createObjectURL(file));
     startTransition(async () => {
       try {
@@ -298,6 +326,7 @@ export const CoverPhoto = ({
 
         if (uploadedImage) {
           onChange(uploadedImage);
+          onUploadComplete(false);
         }
       } catch (error) {
         console.log(error);

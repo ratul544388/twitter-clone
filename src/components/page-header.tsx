@@ -35,7 +35,7 @@ export const PageHeader = ({
         className,
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex w-full items-center gap-3">
         {currentUser && <MobileSidebar />}
         {backButtonUrl && !showBackButton && (
           <Link
@@ -68,6 +68,22 @@ export const PageHeader = ({
             </p>
           )}
         </div>
+        {!currentUser && (
+          <div className="ml-auto flex gap-3">
+            <Link
+              href="/auth/login"
+              className={cn(buttonVariants())}
+            >
+              Login
+            </Link>
+            <Link
+              href="/auth/register"
+              className={cn(buttonVariants({ variant: "secondary" }))}
+            >
+              Register
+            </Link>
+          </div>
+        )}
       </div>
       {showSearchInput && <SearchInput className="block" />}
     </div>

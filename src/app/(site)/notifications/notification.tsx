@@ -23,17 +23,17 @@ export const Notification = ({ notification }: NotificationProps) => {
   > = {
     LIKE: {
       message: "liked Your tweet",
-      icon: <FaHeart className="size-4" />,
+      icon: <FaHeart className="size-4 text-white" />,
       href: `/tweets/${notification.tweetId}`,
     },
     FOLLOW: {
       message: "followed You",
-      icon: <FaUserCheck className="size-4" />,
+      icon: <FaUserCheck className="size-4 text-white" />,
       href: `/${notification.issuer.username}`,
     },
     COMMENT: {
       message: "commented on your tweet",
-      icon: <FaComment className="size-4" />,
+      icon: <FaComment className="size-4 text-white" />,
       href: `/tweets/${notification.tweetId}`,
     },
   };

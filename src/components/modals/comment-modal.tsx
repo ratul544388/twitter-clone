@@ -1,9 +1,9 @@
 import { TweetData } from "@/types";
 import { useEffect, useRef } from "react";
 import { CommentInput } from "../comment-input";
+import { Comments } from "../comments";
 import { Tweet } from "../tweets/tweet";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Comments } from "../comments";
 
 export default function CommentModal({
   tweet,
@@ -26,6 +26,7 @@ export default function CommentModal({
     }, 100);
   }, []);
 
+
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="gap-0 p-0 outline-none">
@@ -34,7 +35,7 @@ export default function CommentModal({
         </DialogHeader>
         <div
           ref={scrollContainerRef}
-          className="thin-scrollbar max-h-[80vh] overflow-y-auto"
+          className="thin-scrollbar max-h-[calc(100dvh_-_4rem)] sm:max-h-[80vh] overflow-y-auto"
         >
           <div ref={scrollTargetRef}>
             <Tweet
@@ -45,7 +46,7 @@ export default function CommentModal({
             />
           </div>
           <Comments tweet={tweet} />
-          <div className="bg-background p-3 sticky bottom-0">
+          <div className="sticky bottom-0 bg-background p-3">
             <CommentInput tweet={tweet} autoFocus />
           </div>
         </div>

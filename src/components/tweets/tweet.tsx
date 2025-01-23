@@ -23,6 +23,7 @@ import { UserTooltip } from "../user-tooltip";
 import { BookmarkButton } from "./bookmark-button";
 import { CommentButton } from "./comment-button";
 import { LikeButton } from "./like-button";
+import { LinkOrDiv } from "../link-or-div";
 
 interface TweetProps {
   tweet: TweetData;
@@ -65,19 +66,15 @@ export const Tweet = ({
         </div>
         <MoreButton tweet={tweet} viewTweet={viewTweet} />
       </div>
-      {viewTweet ? (
-        <div className="mt-2 block whitespace-pre-line break-words">
-          <ProcessedContent content={tweet.content} />
-        </div>
-      ) : (
-        <Link
-          href={`/tweets/${tweet.id}`}
-          className="mt-2 block whitespace-pre-line break-words"
-        >
-          <ProcessedContent content={tweet.content} />
-        </Link>
+      <LinkOrDiv
+        href={!viewTweet ? `/tweets/${tweet.id}` : undefined}
+        className="mt-2 block whitespace-pre-line break-words"
+      >
+        <ProcessedContent content={tweet.content} />
+      </LinkOrDiv>
+      {!!tweet.attachments.length && (
+        <MediaPreview tweet={tweet} viewOnly={viewTweet} />
       )}
-      {!!tweet.attachments.length && <MediaPreview tweet={tweet} />}
       <ReactButtons tweet={tweet} />
       {showCommentInput && (
         <>
@@ -89,7 +86,13 @@ export const Tweet = ({
   );
 };
 
-const MediaPreview = ({ tweet }: { tweet: TweetData }) => {
+const MediaPreview = ({
+  tweet,
+  viewOnly,
+}: {
+  tweet: TweetData;
+  viewOnly?: boolean;
+}) => {
   const attachments = tweet.attachments;
 
   return (
@@ -105,14 +108,18 @@ const MediaPreview = ({ tweet }: { tweet: TweetData }) => {
           )}
         >
           {type === "IMAGE" && (
-            <Link href={`/tweets/${tweet.id}/media/${index + 1}`}>
+            <LinkOrDiv
+              href={
+                !viewOnly ? `/tweets/${tweet.id}/media/${index + 1}` : undefined
+              }
+            >
               <Image src={url} alt="attachment" fill className="object-cover" />
               {attachments.length > 4 && index === 3 && (
-                <span className="absolute inset-0 flex items-center justify-center bg-neutral-900/70 text-lg font-bold text-muted-foreground">
+                <span className="absolute pointer-events-none inset-0 flex items-center justify-center bg-neutral-900/70 text-lg font-semibold text-muted-foreground">
                   {attachments.length - 4} more
                 </span>
               )}
-            </Link>
+            </LinkOrDiv>
           )}
           {type === "VIDEO" && (
             <video controls className="max-h-[30rem]">

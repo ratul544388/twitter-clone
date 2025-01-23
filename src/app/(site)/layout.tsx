@@ -8,10 +8,10 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <main className="mx-auto flex w-full max-w-screen-xl">
       <DesktopSidebar />
-      <div className="pb-10 w-full">{children}</div>
+      <div className="w-full pb-24 sm:pb-10">{children}</div>
       <RightSidebar />
-      <BottomNavigationMenu/>
-      <BottomSignupBar/>
+      <BottomNavigationMenu />
+      <BottomSignupBar />
     </main>
   );
 }
