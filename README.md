@@ -1,7 +1,3 @@
-Thank you for the detailed info. Based on your stack, the project’s purpose, and the features, here’s a **professional and complete `README.md`** file for your **Twitter Clone (WorkSphear)** using **Next.js 15, Prisma, Lucia Auth, and more**.
-
----
-
 ```md
 # 🐦 Twitter Clone – Full-Stack Blog Social App
 
